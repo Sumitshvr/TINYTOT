@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Attendance</title>
+</head>
+<body>
+    <h1>Edit Attendance for {{ student.name }} (Roll No: {{ student.rollno }}) - Class {{ class_id }}</h1>
+    <form method="post" action="{{ url_for('addattendance', class_id=class_id, rollno=student.rollno) }}">
+        <label for="new_attendance">New Attendance:</label>
+        <input type="text" id="new_attendance" name="new_attendance" required>
+        <button type="submit">Update Attendance</button>
+    </form>
+</body>
+</html>

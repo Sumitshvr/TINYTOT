@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Attendance</title>
+    <style>
+        .editable {
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add Attendance for Class {{ class_id }}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>Attendance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in query %}
+                <tr>
+                    <td>{{ row.rollno }}</td>
+                    <td>{{ row.name }}</td>
+                    <td class="editable" contenteditable="true" data-rollno="{{ row.rollno }}" data-original-value="{{ row.attendance }}">
+                        {{ row.attendance }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var editableCells = document.querySelectorAll('.editable');
+    
+            editableCells.forEach(function(cell) {
+                cell.addEventListener('focus', function() {
+                    cell.setAttribute('data-original-value', cell.textContent.trim());
+                });
+    
+                cell.addEventListener('blur', function() {
+                    var newAttendance = cell.textContent.trim();
+                    var rollno = cell.getAttribute('data-rollno');
+                    var originalValue = cell.getAttribute('data-original-value');
+    
+                    if (newAttendance !== originalValue) {
+                        // Update the database with the new attendance value
+                        fetch(`/updateattendance/${class_id}/${rollno}/${newAttendance}`, {
+                            method: 'POST'
+                            // You may need to include additional headers or data based on your server setup
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log(data);  // Handle the response from the server if needed
+                        })
+                        .catch(error => {
+                            console.error('Error updating attendance:', error);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
